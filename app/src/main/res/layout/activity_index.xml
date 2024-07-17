@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".IndexActivity">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="搜索"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/banner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+
+        <TextView
+            android:id="@+id/excell_song_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="专属好歌"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/excell_song"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="每日推荐"
+            />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recommand_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="热门金曲"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/hot_song"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
