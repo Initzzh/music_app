@@ -45,6 +45,7 @@ dependencies {
     implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:3.0.14")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("jp.wasabeef:glide-transformations:4.3.0")
+    implementation("io.github.youth5201314:banner:2.2.3")
     implementation("io.github.scwang90:refresh-layout-kernel:2.0.6")   //核心必须依赖
     implementation("io.github.scwang90:refresh-header-classics:2.0.6") //经典刷新头
     implementation("io.github.scwang90:refresh-header-radar:2.0.6")    //雷达刷新头

@@ -9,52 +9,92 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
+
+
         <EditText
+            android:id="@+id/searchEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="搜索"/>
+            android:background="@drawable/shape_input"
+            android:hint="一直很安静"
+            android:inputType="text"
+            android:drawableLeft="@drawable/search_icon"
+
+
+            android:padding="8dp"
+            />
+
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/smart_fresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srlEnableAutoLoadMore="false"
+            app:layout_constraintTop_toBottomOf="@+id/btn_search"
+            android:layout_marginTop="30dp">
+        <com.scwang.smart.refresh.header.ClassicsHeader
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srlEnableLastTime="false"
+            app:srlTextPulling="加载上一页数据"/>
+
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/banner"
+            android:id="@+id/recycle_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-
-
-        <TextView
-            android:id="@+id/excell_song_title"
-            android:layout_width="wrap_content"
+        <com.scwang.smart.refresh.footer.ClassicsFooter
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="专属好歌"
-            />
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/excell_song"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="每日推荐"
-            />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recommand_song"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+            app:srlTextPulling="加载下一页数据"/>
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="热门金曲"
-            />
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/hot_song"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+<!--<com.youth.banner.Banner-->
+<!--android:id="@+id/banner2"-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="wrap_content"-->
+<!--    />-->
+
+<!--<androidx.recyclerview.widget.RecyclerView-->
+<!--android:id="@+id/banner"-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="wrap_content"/>-->
+
+<!--<TextView-->
+<!--android:id="@+id/excell_song_title"-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:text="专属好歌"-->
+<!--    />-->
+<!--<androidx.recyclerview.widget.RecyclerView-->
+<!--android:id="@+id/excell_song"-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="wrap_content"/>-->
+
+<!--<TextView-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:text="每日推荐"-->
+<!--    />-->
+<!--<androidx.recyclerview.widget.RecyclerView-->
+<!--android:id="@+id/recommand_song"-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="wrap_content"/>-->
+
+<!--<TextView-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:text="热门金曲"-->
+<!--    />-->
+<!--<androidx.recyclerview.widget.RecyclerView-->
+<!--android:id="@+id/hot_song"-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="wrap_content"/>-->

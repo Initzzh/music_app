@@ -5,7 +5,7 @@ import java.util.List;
 public class HomePageInfo {
     private int moduleConfigId;
     private String moduleName;
-    private String style;
+    private int style;
     private List<MusicInfo> musicInfoList;
 
     public int getModuleConfigId() {
@@ -24,11 +24,11 @@ public class HomePageInfo {
         this.moduleName = moduleName;
     }
 
-    public String getStyle() {
+    public int getStyle() {
         return style;
     }
 
-    public void setStyle(String style) {
+    public void setStyle(int style) {
         this.style = style;
     }
 

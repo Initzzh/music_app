@@ -30,7 +30,7 @@
 
         />
     <TextView
-        android:id="@+id/music_singer"
+        android:id="@+id/music_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/music_name"
@@ -44,11 +44,21 @@
         android:id="@+id/image_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bofang"
+        android:background="@drawable/play"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginRight="26dp"
         android:layout_marginTop="126dp"
+        />
+
+    <TextView
+        android:id="@+id/add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/image_play"
+        app:layout_constraintRight_toRightOf="@id/image_play"
+        android:text="+"
+        android:textColor="@color/white"
         />
     
 

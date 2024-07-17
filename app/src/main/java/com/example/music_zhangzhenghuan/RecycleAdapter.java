@@ -21,7 +21,7 @@ public class RecycleAdapter extends BaseQuickAdapter<MusicInfo, BaseViewHolder> 
     @Override
     protected void convert(@NonNull BaseViewHolder helper, MusicInfo musicInfo) {
         helper.setText(R.id.music_name,musicInfo.getMusicName());
-        helper.setText(R.id.music_singer,musicInfo.getAuthor());
+        helper.setText(R.id.music_author,musicInfo.getAuthor());
         ImageView musicImage = helper.getView(R.id.music_cover_image);
         String url = musicInfo.getCoverUrl();
         String httpsUrl = url.replace("http://", "https://");

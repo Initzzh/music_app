@@ -2,7 +2,6 @@ package com.example.music_zhangzhenghuan;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,9 +10,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
+import com.youth.banner.Banner;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,21 +33,22 @@ import okhttp3.Response;
 public class IndexActivity extends AppCompatActivity {
 
 
+    private static final int MSG_MUSIC_DATA = 1;
+    private static final int MSG_SHOW_TOAST = 2;
 
-    private RecyclerView recyclerBanner;
-    private BannerAdapter bannerAdapter;
+    private RecyclerView contentRecyclerView;
 
-    private RecyclerView excellentSongView;
+    private SmartRefreshLayout smartRefreshLayout;
 
-    private RecycleAdapter recycleAdapter;
+    private int currentPage = 1;
 
-    private RecyclerView recommandRecyclerView;
+    private String searchContext;
 
-    private RecycleAdapter recommandAdapter;
+    private int pageSize = 10;
 
-    private RecyclerView hotRecyclerView;
 
-    private RecycleAdapter hotAdapter;
+    private IndexAdapter indexAdapter;
+
 
 
     private OkHttpClient client;
@@ -50,15 +56,6 @@ public class IndexActivity extends AppCompatActivity {
 
     private List<HomePageInfo> homePageInfos;
 
-    private List<MusicInfo> bannerDataList;
-
-    private List<MusicInfo> excellentSongList;
-
-    private List<MusicInfo> recommandSongList;
-
-    private List<MusicInfo> hotSongList;
-
-    private List<Integer> bannerImg;
 
     private Handler mhandler;
 
@@ -67,65 +64,57 @@ public class IndexActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_index);
 
+        contentRecyclerView = findViewById(R.id.recycle_content);
 
-        // 轮播图
-        recyclerBanner = findViewById(R.id.banner);
-        recyclerBanner.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
-        bannerDataList  = new ArrayList<>();
-        bannerAdapter = new BannerAdapter(R.layout.music_item,bannerDataList);
 
-//        recyclerBanner.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//                if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//            }
-//        });
+        homePageInfos = new ArrayList<>();
 
-        // 专属好歌RecycleView
-        recyclerBanner.setAdapter(bannerAdapter);
-        excellentSongView = findViewById(R.id.excell_song);
-        excellentSongView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        excellentSongList = new ArrayList<>();
-        recycleAdapter= new RecycleAdapter(R.layout.music_item,excellentSongList);
-        excellentSongView.setAdapter(recycleAdapter);
+        indexAdapter = new IndexAdapter(homePageInfos);
+        contentRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false));
+        contentRecyclerView.setAdapter(indexAdapter);
 
-        // 每日推荐
-        recommandSongList = new ArrayList<>();
-        recommandRecyclerView = findViewById(R.id.recommand_song);
-        recommandRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false));
-        recommandAdapter = new RecycleAdapter(R.layout.music_item,recommandSongList);
-        recommandRecyclerView.setAdapter(recycleAdapter);
+        searchMusic(1,4);
 
-        // 热门金曲
+        smartRefreshLayout = findViewById(R.id.smart_fresh_layout);
+        smartRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                searchMusic(currentPage, pageSize);
+                refreshLayout.finishRefresh(500);
+            }
+        });
+        smartRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                pageSize = pageSize+1;
+//                int currentSize = indexAdapter.getHomePageInfos().size();
+//                int currentPage = (currentSize % 4 == 0) ? (currentSize / 10) : (currentSize / 10 + 1);
+//                searchGames(searchContext, currentPage, pageSize, true);
+                searchMusic(pageSize, pageSize);
+                refreshLayout.finishLoadMore(500);
+            }
+        });
 
-        hotSongList = new ArrayList<>();
-        hotRecyclerView = findViewById(R.id.hot_song);
-        hotRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        hotAdapter = new RecycleAdapter(R.layout.music_item, hotSongList);
-        hotRecyclerView.setAdapter(hotAdapter);
 
-        musicHomePage(1,4);
         mhandler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
-                bannerAdapter.notifyDataSetChanged();
-                recycleAdapter.notifyDataSetChanged();
-                recommandAdapter.notifyDataSetChanged();
-                hotAdapter.notifyDataSetChanged();
+                switch (msg.what){
+                    case MSG_MUSIC_DATA:
+                        List<HomePageInfo> newData = (List<HomePageInfo>) msg.obj;
+                        homePageInfos.addAll(newData);
+                        indexAdapter.notifyDataSetChanged();
+                }
+//                itemRecycleAdapter.notifyDataSetChanged();
+//                indexAdapter.notifyDataSetChanged();
+//                List<HomePageInfo> newData = (List<HomePageInfo>) msg.obj;
+//                updateData(newData);
             }
         };
     }
 
-    private void musicHomePage(int currentPage, int pageSize){
+    private void searchMusic(int currentPage, int pageSize){
 //        https://hotfix-service-prod.g.mi.com/music/homePage?current=1&size=4
 
         client = new OkHttpClient.Builder().build();
@@ -149,18 +138,14 @@ public class IndexActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.isSuccessful()){
-                    List<HomePageInfo> homePageInfos = parseJsonWithObject(response);
-                    List<MusicInfo> curBannerList = homePageInfos.get(0).getMusicInfoList();
-                    List<MusicInfo> curExcellentSongList = homePageInfos.get(1).getMusicInfoList();
-                    List<MusicInfo> curReommandSongList = homePageInfos.get(2).getMusicInfoList();
-                    List<MusicInfo> curHotSongList = homePageInfos.get(3).getMusicInfoList();
-                    bannerDataList.addAll(curBannerList);
-                    excellentSongList.addAll(curExcellentSongList);
-                    recommandSongList.addAll(curReommandSongList);
-                    hotSongList.addAll(curHotSongList);
 
-                    mhandler.sendEmptyMessage(0);
-
+                    List<HomePageInfo> curHomePageInfos = parseJsonWithObject(response);
+//                    homePageInfos.addAll(curHomePageInfos);
+                    Message message = mhandler.obtainMessage(MSG_MUSIC_DATA, curHomePageInfos);
+                    mhandler.sendMessage(message);
+//                    List<MusicInfo> musicInfoList1 = curHomePageInfos.get(0).getMusicInfoList();
+//                    musicInfoList.addAll(musicInfoList1);
+//                    mhandler.sendEmptyMessage(0);
 
                 }
 
@@ -176,5 +161,14 @@ public class IndexActivity extends AppCompatActivity {
         HomPageResponse homPageResponse = gson.fromJson(responseData, HomPageResponse.class);
         List<HomePageInfo>  data = homPageResponse.getData().getRecords();
         return data;
+    }
+
+    private void updateData(List<HomePageInfo> newData) {
+        if (currentPage == 1) {
+            homePageInfos.clear(); // 如果是第一页数据，则清空现有数据
+        }
+        homePageInfos.addAll(newData); // 添加新数据到列表
+        indexAdapter.notifyDataSetChanged();
+
     }
 }
