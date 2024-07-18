@@ -469,7 +469,7 @@ public class MusicPlayActivity extends AppCompatActivity {
                 Glide.with(getApplicationContext()).load(httpsUrl).apply(options).into(musicCoverImage);
                 musicName.setText(curMusicInfo.getMusicName());
                 musicAuthor.setText(curMusicInfo.getAuthor());
-                playImage.setImageResource(R.drawable.pause);
+                playImage.setImageResource(R.drawable.play);
 
                 // 设置进度条
                 int totalDuration = musicPlayService.getDuration();
