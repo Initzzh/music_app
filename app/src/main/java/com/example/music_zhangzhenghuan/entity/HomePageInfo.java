@@ -1,4 +1,4 @@
-package com.example.music_zhangzhenghuan;
+package com.example.music_zhangzhenghuan.entity;
 
 import java.util.List;
 

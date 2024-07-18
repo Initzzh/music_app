@@ -1,5 +1,6 @@
-package com.example.music_zhangzhenghuan;
+package com.example.music_zhangzhenghuan.adatper;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,22 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.music_zhangzhenghuan.activity.MusicPlayActivity;
+import com.example.music_zhangzhenghuan.entity.AddMusicEvent;
+import com.example.music_zhangzhenghuan.entity.MusicInfo;
+import com.example.music_zhangzhenghuan.R;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.Serializable;
 import java.util.List;
 
 public class ItemRecycleAdapter extends RecyclerView.Adapter<ItemRecycleAdapter.ViewHolder>{
 
     private List<MusicInfo> musicInfoList;
+
+    private List<MusicInfo> playMusicList;
+
 
     private int layoutId;
 
@@ -54,6 +65,12 @@ public class ItemRecycleAdapter extends RecyclerView.Adapter<ItemRecycleAdapter.
             public void onClick(View v) {
 
                 Toast.makeText(holder.itemView.getContext(), musicInfo.getMusicName(), Toast.LENGTH_SHORT).show();
+                Intent musicPlayIntent = new Intent(holder.itemView.getContext(), MusicPlayActivity.class);
+                Serializable musicInfoListSerializable = (Serializable) musicInfoList;
+                musicPlayIntent.putExtra("musicInfoList", musicInfoListSerializable);
+
+                holder.itemView.getContext().startActivity(musicPlayIntent);
+
             }
         });
 
@@ -67,6 +84,8 @@ public class ItemRecycleAdapter extends RecyclerView.Adapter<ItemRecycleAdapter.
         holder.textAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EventBus.getDefault().postSticky(new AddMusicEvent(musicInfo));
+
                 Toast.makeText(holder.itemView.getContext(), "将"+musicInfo.getMusicName()+"添加到音乐列表", Toast.LENGTH_SHORT).show();
             }
         });
@@ -92,9 +111,7 @@ public class ItemRecycleAdapter extends RecyclerView.Adapter<ItemRecycleAdapter.
             musicCoverImage =  itemView.findViewById(R.id.music_cover_image);
             musicName = itemView.findViewById(R.id.music_name);
             musicAuthor = itemView.findViewById(R.id.music_author);
-
             playImage = itemView.findViewById(R.id.image_play);
-
             textAdd = itemView.findViewById(R.id.add);
 
         }

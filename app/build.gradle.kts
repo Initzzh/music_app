@@ -55,6 +55,8 @@ dependencies {
     implementation("io.github.scwang90:refresh-footer-ball:2.0.6")     //球脉冲加载
     implementation("io.github.scwang90:refresh-footer-classics:2.0.6") //经典加载
 
+    implementation("org.greenrobot:eventbus:3.3.1")
+
 
 
 }

@@ -1,4 +1,4 @@
-package com.example.music_zhangzhenghuan;
+package com.example.music_zhangzhenghuan.entity;
 
 public class HomPageResponse {
     private int code;

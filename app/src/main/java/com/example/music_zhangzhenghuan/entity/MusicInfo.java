@@ -1,6 +1,8 @@
-package com.example.music_zhangzhenghuan;
+package com.example.music_zhangzhenghuan.entity;
 
-public class MusicInfo {
+import java.io.Serializable;
+
+public class MusicInfo implements Serializable {
 
     private Long id;
     private String musicName;

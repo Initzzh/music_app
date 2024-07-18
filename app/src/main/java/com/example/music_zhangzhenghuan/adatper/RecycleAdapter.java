@@ -1,4 +1,4 @@
-package com.example.music_zhangzhenghuan;
+package com.example.music_zhangzhenghuan.adatper;
 
 import android.widget.ImageView;
 
@@ -11,6 +11,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.example.music_zhangzhenghuan.entity.MusicInfo;
+import com.example.music_zhangzhenghuan.R;
 
 import java.util.List;
 

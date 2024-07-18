@@ -1,4 +1,4 @@
-package com.example.music_zhangzhenghuan;
+package com.example.music_zhangzhenghuan.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,15 +10,22 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
+import com.example.music_zhangzhenghuan.entity.AddMusicEvent;
+import com.example.music_zhangzhenghuan.entity.HomPageResponse;
+import com.example.music_zhangzhenghuan.entity.HomePageInfo;
+import com.example.music_zhangzhenghuan.R;
+import com.example.music_zhangzhenghuan.adatper.IndexAdapter;
+import com.example.music_zhangzhenghuan.entity.MusicInfo;
 import com.google.gson.Gson;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
-import com.youth.banner.Banner;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,6 +56,8 @@ public class IndexActivity extends AppCompatActivity {
 
     private IndexAdapter indexAdapter;
 
+    private List<MusicInfo> playMusicList;
+
 
 
     private OkHttpClient client;
@@ -65,11 +74,14 @@ public class IndexActivity extends AppCompatActivity {
         setContentView(R.layout.activity_index);
 
         contentRecyclerView = findViewById(R.id.recycle_content);
+        EventBus.getDefault().register(this);
 
 
         homePageInfos = new ArrayList<>();
 
-        indexAdapter = new IndexAdapter(homePageInfos);
+        playMusicList = new ArrayList<>();
+
+        indexAdapter = new IndexAdapter(homePageInfos, playMusicList);
         contentRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false));
         contentRecyclerView.setAdapter(indexAdapter);
 
@@ -163,12 +175,19 @@ public class IndexActivity extends AppCompatActivity {
         return data;
     }
 
-    private void updateData(List<HomePageInfo> newData) {
-        if (currentPage == 1) {
-            homePageInfos.clear(); // 如果是第一页数据，则清空现有数据
-        }
-        homePageInfos.addAll(newData); // 添加新数据到列表
-        indexAdapter.notifyDataSetChanged();
+
+    @Subscribe(sticky = true)
+    public void onAddMessageEvent(AddMusicEvent addMusicEvent){
+        playMusicList.add(addMusicEvent.getMusicInfo());
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mhandler.removeCallbacksAndMessages(null);
+        mhandler.removeMessages(0);
+        EventBus.getDefault().unregister(this);
 
     }
 }

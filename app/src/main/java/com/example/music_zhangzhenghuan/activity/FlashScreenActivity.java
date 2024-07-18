@@ -1,4 +1,4 @@
-package com.example.music_zhangzhenghuan;
+package com.example.music_zhangzhenghuan.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
@@ -20,7 +19,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class flashScreenActivity extends AppCompatActivity {
+import com.example.music_zhangzhenghuan.R;
+
+public class FlashScreenActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "AppPrefs";
     private static final String  FIRST_LAUNCH = "firstLAUNCH";

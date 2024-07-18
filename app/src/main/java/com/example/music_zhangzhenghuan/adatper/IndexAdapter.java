@@ -1,8 +1,6 @@
-package com.example.music_zhangzhenghuan;
+package com.example.music_zhangzhenghuan.adatper;
 
 import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.pdf.PdfDocument;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
 
-import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
-import com.chad.library.adapter.base.viewholder.BaseViewHolder;
-import com.example.music_zhangzhenghuan.adatper.BannerAdapter;
-import com.example.music_zhangzhenghuan.adatper.BannerAdapter2;
+import com.example.music_zhangzhenghuan.entity.HomePageInfo;
+import com.example.music_zhangzhenghuan.entity.MusicInfo;
+import com.example.music_zhangzhenghuan.R;
 import com.youth.banner.Banner;
 import com.youth.banner.indicator.CircleIndicator;
 
@@ -28,6 +24,8 @@ public class IndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private List<HomePageInfo> homePageInfos;
 
+    private List<MusicInfo> playMusicList;
+
 
     public List<HomePageInfo> getHomePageInfos() {
         return homePageInfos;
@@ -37,9 +35,10 @@ public class IndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         this.homePageInfos = homePageInfos;
     }
 
-    public IndexAdapter(List<HomePageInfo> homePageInfos){
+    public IndexAdapter(List<HomePageInfo> homePageInfos, List<MusicInfo> playMusicList){
 
         this.homePageInfos = homePageInfos;
+        this.playMusicList = playMusicList;
     }
 
     @Override
@@ -53,6 +52,7 @@ public class IndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater =  LayoutInflater.from(parent.getContext());
+
         switch (viewType){
             case 1:
                 Log.d("TAG", "onCreateViewHolder: ");
@@ -148,6 +148,8 @@ public class IndexAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         public void bind(List<MusicInfo> musicInfoList){
             recommandRecycle.setLayoutManager(new GridLayoutManager(itemView.getContext(), 1));
             recommandRecycle.setAdapter(new ItemRecycleAdapter(musicInfoList, R.layout.music_item));
+
+
         }
 
     }
