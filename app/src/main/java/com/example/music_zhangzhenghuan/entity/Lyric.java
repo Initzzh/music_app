@@ -1,37 +1,27 @@
 package com.example.music_zhangzhenghuan.entity;
 
-import java.util.Map;
-
 public class Lyric {
+    String time;
+    String content;
 
-
-    private Long id;
-
-
-    private  Map<String,String> lyricMap;
-
-    public  Lyric(Long id){
-        this.id = id;
+    public Lyric(String time, String content) {
+        this.time = time;
+        this.content = content;
     }
 
-    public Lyric(Long id, Map<String ,String> lyricMap){
-        this.id = id;
-        this.lyricMap = lyricMap;
+    public String getTime() {
+        return time;
     }
 
-    public Long getId() {
-        return id;
+    public void setTime(String time) {
+        this.time = time;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public String getContent() {
+        return content;
     }
 
-    public Map<String, String> getLyricMap() {
-        return lyricMap;
-    }
-
-    public void setLyricMap(Map<String, String> lyricMap) {
-        this.lyricMap = lyricMap;
+    public void setContent(String content) {
+        this.content = content;
     }
 }

@@ -16,7 +16,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.music_zhangzhenghuan.activity.MusicPlayActivity;
-import com.example.music_zhangzhenghuan.entity.AddMusicEvent;
+import com.example.music_zhangzhenghuan.entity.MusicEvent;
 import com.example.music_zhangzhenghuan.entity.MusicInfo;
 import com.example.music_zhangzhenghuan.R;
 
@@ -29,6 +29,7 @@ public class ItemRecycleAdapter extends RecyclerView.Adapter<ItemRecycleAdapter.
 
     private List<MusicInfo> musicInfoList;
 
+    private final int MSG_ADD_MUSIC = 0;
     private List<MusicInfo> playMusicList;
 
 
@@ -84,7 +85,7 @@ public class ItemRecycleAdapter extends RecyclerView.Adapter<ItemRecycleAdapter.
         holder.textAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventBus.getDefault().postSticky(new AddMusicEvent(musicInfo));
+                EventBus.getDefault().postSticky(new MusicEvent(musicInfo, MSG_ADD_MUSIC));
 
                 Toast.makeText(holder.itemView.getContext(), "将"+musicInfo.getMusicName()+"添加到音乐列表", Toast.LENGTH_SHORT).show();
             }

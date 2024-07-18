@@ -12,11 +12,11 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.music_zhangzhenghuan.entity.AddMusicEvent;
 import com.example.music_zhangzhenghuan.entity.HomPageResponse;
 import com.example.music_zhangzhenghuan.entity.HomePageInfo;
 import com.example.music_zhangzhenghuan.R;
 import com.example.music_zhangzhenghuan.adatper.IndexAdapter;
+import com.example.music_zhangzhenghuan.entity.MusicEvent;
 import com.example.music_zhangzhenghuan.entity.MusicInfo;
 import com.google.gson.Gson;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
@@ -74,7 +74,7 @@ public class IndexActivity extends AppCompatActivity {
         setContentView(R.layout.activity_index);
 
         contentRecyclerView = findViewById(R.id.recycle_content);
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
 
 
         homePageInfos = new ArrayList<>();
@@ -136,6 +136,7 @@ public class IndexActivity extends AppCompatActivity {
         Request request = new Request.Builder()
                 .get()
                 .url(url)
+                .header("content-type","application/json")
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -176,10 +177,10 @@ public class IndexActivity extends AppCompatActivity {
     }
 
 
-    @Subscribe(sticky = true)
-    public void onAddMessageEvent(AddMusicEvent addMusicEvent){
-        playMusicList.add(addMusicEvent.getMusicInfo());
-    }
+//    @Subscribe(sticky = true)
+//    public void onAddMessageEvent(MusicEvent addMusicEvent){
+//        playMusicList.add(addMusicEvent.getMusicInfo());
+//    }
 
 
     @Override
@@ -187,7 +188,7 @@ public class IndexActivity extends AppCompatActivity {
         super.onDestroy();
         mhandler.removeCallbacksAndMessages(null);
         mhandler.removeMessages(0);
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
 
     }
 }
