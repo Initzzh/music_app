@@ -48,6 +48,8 @@ public class MusicPlayService extends Service {
 
     private int preMusicIndex;
 
+    private boolean isInit = false;
+
 //    private List<Integer> playedMusicIndex;
 
 
@@ -83,7 +85,6 @@ public class MusicPlayService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         return mBinder;
 
     }
@@ -96,12 +97,16 @@ public class MusicPlayService extends Service {
     }
 
     public void initMusic(String url){
-        try {
-            mediaPlayer.setDataSource(url);
-            mediaPlayer.prepare();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if(mediaPlayer != null ){
+            try {
+                mediaPlayer.reset();
+                mediaPlayer.setDataSource(url);
+                mediaPlayer.prepare();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+
     }
 
     public int getDuration(){
@@ -109,12 +114,21 @@ public class MusicPlayService extends Service {
     }
 
     public int getCurPosition(){
-
-        return mediaPlayer.getCurrentPosition();
+        if(mediaPlayer != null)
+        {
+            return mediaPlayer.getCurrentPosition();
+        }
+        return 0;
     }
 
     public void playMusic(){
-        mediaPlayer.start();
+        if(mediaPlayer != null){
+            if(!isInit){
+                initMusic(musicInfoList.get(curMusicIndex).getMusicUrl());
+            }
+            mediaPlayer.start();
+        }
+
 
     }
 
@@ -147,8 +161,10 @@ public class MusicPlayService extends Service {
             // 加载数据
             initMusic(musicInfoList.get(curMusicIndex).getMusicUrl());
             mediaPlayer.start();
-            // 向activity发送消息
-            EventBus.getDefault().postSticky(new MusicEvent(musicInfoList.get(curMusicIndex),MSG_UPDATE_ACTIVITY));
+
+            MusicInfo musicInfo = musicInfoList.get(curMusicIndex);
+            MusicEvent  musicEvent = new MusicEvent(MSG_UPDATE_ACTIVITY, musicInfo, curMusicIndex);
+            EventBus.getDefault().postSticky(musicEvent);
 
         }
     }
@@ -169,8 +185,11 @@ public class MusicPlayService extends Service {
             // 加载数据
             initMusic(musicInfoList.get(curMusicIndex).getMusicUrl());
             mediaPlayer.start();
+            MusicInfo musicInfo = musicInfoList.get(curMusicIndex);
+            MusicEvent  musicEvent = new MusicEvent(MSG_UPDATE_ACTIVITY, musicInfo, curMusicIndex);
+            EventBus.getDefault().postSticky(musicEvent);
 //            EventBus.getDefault().postSticky(musicInfoList.get(curMusicIndex));
-            EventBus.getDefault().postSticky(new MusicEvent(musicInfoList.get(curMusicIndex),MSG_UPDATE_ACTIVITY));
+//            EventBus.getDefault().postSticky(new MusicEvent(musicInfoList.get(curMusicIndex),MSG_UPDATE_ACTIVITY));
         }
     }
 
@@ -180,8 +199,11 @@ public class MusicPlayService extends Service {
             curMusicIndex = (curMusicIndex - 1 + musicInfoList.size()) % musicInfoList.size();
             initMusic(musicInfoList.get(curMusicIndex).getMusicUrl());
             mediaPlayer.start();
+            MusicInfo musicInfo = musicInfoList.get(curMusicIndex);
+            MusicEvent  musicEvent = new MusicEvent(MSG_UPDATE_ACTIVITY, musicInfo, curMusicIndex);
+            EventBus.getDefault().postSticky(musicEvent);
 //            EventBus.getDefault().postSticky(musicInfoList.get(curMusicIndex));
-            EventBus.getDefault().postSticky(new MusicEvent(musicInfoList.get(curMusicIndex),MSG_UPDATE_ACTIVITY));
+//            EventBus.getDefault().postSticky(new MusicEvent(musicInfoList.get(curMusicIndex),MSG_UPDATE_ACTIVITY));
 
         }
     }

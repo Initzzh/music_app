@@ -47,7 +47,7 @@ public class LyricRecycleAdapter extends RecyclerView.Adapter<LyricRecycleAdapte
         if(position == hightPosition){
             holder.lyricText.setTextColor(holder.itemView.getResources().getColor(R.color.white));
         }else {
-            holder.lyricText.setTextColor(holder.itemView.getResources().getColor(R.color.gray));
+            holder.lyricText.setTextColor(holder.itemView.getResources().getColor(R.color.text_gray));
         }
     }
 

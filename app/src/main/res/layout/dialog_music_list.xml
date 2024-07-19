@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="170dp"
+    android:background="@drawable/shape_music_list_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/line"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="30dp"
+        />
+
+    <TextView
+        android:id="@+id/cur_music_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="当前播放"
+        android:textSize="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/line"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:id="@+id/cur_music_list_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/cur_music_list"
+        app:layout_constraintBottom_toBottomOf="@id/cur_music_list"
+
+        android:textSize="16dp"
+        android:textStyle="bold"
+        />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/music_mode_view"
+        android:layout_width="120dp"
+        android:layout_height="25dp"
+        app:layout_constraintTop_toBottomOf="@id/cur_music_list"
+        app:layout_constraintLeft_toLeftOf="@id/cur_music_list"
+        android:background="@drawable/view_shape"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+
+        >
+        <ImageView
+            android:id="@+id/music_mode_image"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginLeft="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/music_mode_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@id/music_mode_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginLeft="5dp"
+
+            android:textSize="13dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/music_list_recycle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/music_mode_view"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

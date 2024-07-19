@@ -1,6 +1,7 @@
 package com.example.music_zhangzhenghuan.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class MusicInfo implements Serializable {
 
@@ -10,6 +11,20 @@ public class MusicInfo implements Serializable {
     private String coverUrl;
     private String musicUrl;
     private String lyricUrl;
+
+    public boolean equals(MusicInfo musicInfo){
+        if(this == musicInfo) return true;
+        if(this.id == musicInfo.getId()){
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, musicName, author, coverUrl, musicUrl, lyricUrl);
+    }
 
     public Long getId() {
         return id;

@@ -6,6 +6,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
@@ -19,7 +22,9 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -29,9 +34,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.music_zhangzhenghuan.R;
 import com.example.music_zhangzhenghuan.adatper.LyricRecycleAdapter;
+import com.example.music_zhangzhenghuan.adatper.MusicListBottomFragment;
 import com.example.music_zhangzhenghuan.entity.Lyric;
 import com.example.music_zhangzhenghuan.entity.MusicEvent;
 import com.example.music_zhangzhenghuan.entity.MusicInfo;
+import com.example.music_zhangzhenghuan.entity.ScaleEvaluator;
+import com.example.music_zhangzhenghuan.entity.ScaleEvaluator2;
 import com.example.music_zhangzhenghuan.service.MusicPlayService;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,8 +47,10 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -52,8 +62,9 @@ import okhttp3.Response;
 
 public class MusicPlayActivity extends AppCompatActivity {
 
-    private final int MSG_ADD_MUSIC = 0;
-    private final int MSG_UPDATE_ACTIVITY = 1;
+    private static final int MSG_ADD_MUSIC = 0;
+    private static final int MSG_UPDATE_ACTIVITY = 1;
+    private static final int MSG_CLOSE_ACTIVITY = 5;
 
     private final int SCROLLPOS = 7;
 
@@ -64,6 +75,8 @@ public class MusicPlayActivity extends AppCompatActivity {
     private ImageView nextMusicImage;
     private ImageView playRuleImage;
     private ImageView loveImage;
+
+    private ImageView musicList;
 
     private RecyclerView lyricRecycle;
 
@@ -122,7 +135,7 @@ public class MusicPlayActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        playMusicList = (List<MusicInfo>) intent.getSerializableExtra("musicInfoList");
+        playMusicList = (List<MusicInfo>) intent.getSerializableExtra("playMusicList");
         Log.i("TAG", "onCreate: ");
 
         closePlay = findViewById(R.id.image_close);
@@ -145,6 +158,16 @@ public class MusicPlayActivity extends AppCompatActivity {
 
         playRuleImage = findViewById(R.id.play_rule);
         playRuleImage.setImageResource(R.drawable.play_rule1);
+        musicList = findViewById(R.id.music_list);
+        musicList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MusicListBottomFragment musicListBottomFragment = new MusicListBottomFragment(playMusicList, playRule);
+                musicListBottomFragment.show(getSupportFragmentManager(),"musicListBottomSheetFragment");
+            }
+        });
+
+
 
 
         // 加载页面
@@ -194,6 +217,7 @@ public class MusicPlayActivity extends AppCompatActivity {
                     Log.i("TAG", "onServiceConnected: 已初始化");
 
                     musicPlayService.addMusicInfoList(playMusicList);
+
                     // 音乐资源初始化
                     musicPlayService.initMusic(playMusicList.get(currentMusicIndex).getMusicUrl());
                     int totalDuration = musicPlayService.getDuration();
@@ -299,8 +323,16 @@ public class MusicPlayActivity extends AppCompatActivity {
         closePlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent indexIntenet = new Intent(MusicPlayActivity.this, IndexActivity.class);
-                startActivity(indexIntenet);
+//                Intent indexIntenet = new Intent(MusicPlayActivity.this, IndexActivity.class);
+//
+//                Serializable musicInfoListSerializable = (Serializable) playMusicList;
+//                indexIntenet.putExtra("playMusicList", musicInfoListSerializable);
+//                indexIntenet.putExtra("curMusicInfoIndex", currentMusicIndex);
+//                startActivity(indexIntenet);
+                EventBus.getDefault().postSticky(new MusicEvent(MSG_CLOSE_ACTIVITY, currentMusicIndex));
+                finish();
+
+
             }
         });
 
@@ -308,13 +340,47 @@ public class MusicPlayActivity extends AppCompatActivity {
         loveImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if(!collectedMusicList.contains(curMusicInfo)){
+
                     loveImage.setImageResource(R.drawable.subtract_red);
+                    loveImage.setPivotX(loveImage.getWidth() / 2f);
+                    loveImage.setPivotY(loveImage.getHeight() / 2f);
+//                    ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, 1.2f, 1.0f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                    ObjectAnimator scaleAnimator = ObjectAnimator.ofPropertyValuesHolder(loveImage,
+                            PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f),
+                            PropertyValuesHolder.ofFloat(View.SCALE_Y,1.0f));
+
+                    scaleAnimator.setEvaluator(new ScaleEvaluator());
+
+                    ObjectAnimator scaleAnimator2 = ObjectAnimator.ofPropertyValuesHolder(loveImage,
+                            PropertyValuesHolder.ofFloat(View.SCALE_X, 0.8f),
+                            PropertyValuesHolder.ofFloat(View.SCALE_Y,1.2f));
+
+
+                    ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(loveImage, View.ROTATION_Y, 0f, 360f);
+                    AnimatorSet animatorSet = new AnimatorSet();
+                    animatorSet.playTogether(scaleAnimator, rotationAnimator );
+                    animatorSet.setDuration(1000);
+                    animatorSet.start();
+
+//
                     collectedMusicList.add(curMusicInfo);
                     Toast.makeText(MusicPlayActivity.this, "收藏成功", Toast.LENGTH_SHORT).show();
                 }else{
                     loveImage.setImageResource(R.drawable.subtract);
+                    loveImage.setPivotX(loveImage.getWidth() / 2f);
+                    loveImage.setPivotY(loveImage.getHeight() / 2f);
+
+                    ObjectAnimator scaleAnimator = ObjectAnimator.ofPropertyValuesHolder(loveImage,
+                            PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f),
+                            PropertyValuesHolder.ofFloat(View.SCALE_Y,1.0f));
+                    scaleAnimator.setEvaluator(new ScaleEvaluator2());
+                    scaleAnimator.setDuration(1000);
+                    scaleAnimator.start();
+
                     collectedMusicList.remove(curMusicInfo);
+
                     Toast.makeText(MusicPlayActivity.this, "取消收藏成功", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -420,44 +486,46 @@ public class MusicPlayActivity extends AppCompatActivity {
 
 
     // EvetBus接收播放音乐更新
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void upateMusic(MusicInfo musicInfo){
-
-        musicCoverImage.setVisibility(View.VISIBLE);
-        String url = musicInfo.getCoverUrl();
-        String httpsUrl = url.replace("http://","https://");
-        RequestOptions options = new RequestOptions().circleCropTransform();
-        Glide.with(getApplicationContext()).load(httpsUrl).apply(options).into(musicCoverImage);
-
-        // 设置进度条
-        int totalDuration = musicPlayService.getDuration();
-        playProgress.setMax(totalDuration);
-        playProgress.setMax(totalDuration);
-        if(totalDuration/1000%60 < 10){
-            endTime.setText(totalDuration/1000/60 + ":0" + totalDuration/1000%60);
-        }else{
-            endTime.setText(totalDuration/1000/60 + ":" + totalDuration/1000%60);
-        }
-
-        musicName.setText(curMusicInfo.getMusicName());
-        musicAuthor.setText(curMusicInfo.getAuthor());
-
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+//    public void upateMusic(MusicInfo musicInfo){
+//
+//        musicCoverImage.setVisibility(View.VISIBLE);
+//        String url = musicInfo.getCoverUrl();
+//        String httpsUrl = url.replace("http://","https://");
+//        RequestOptions options = new RequestOptions().circleCropTransform();
+//        Glide.with(getApplicationContext()).load(httpsUrl).apply(options).into(musicCoverImage);
+//
+//        // 设置进度条
+//        int totalDuration = musicPlayService.getDuration();
+//        playProgress.setMax(totalDuration);
+//        playProgress.setMax(totalDuration);
+//        if(totalDuration/1000%60 < 10){
+//            endTime.setText(totalDuration/1000/60 + ":0" + totalDuration/1000%60);
+//        }else{
+//            endTime.setText(totalDuration/1000/60 + ":" + totalDuration/1000%60);
+//        }
+//
+//        musicName.setText(curMusicInfo.getMusicName());
+//        musicAuthor.setText(curMusicInfo.getAuthor());
+//
+//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void upateMusic(MusicEvent musicEvent){
         switch (musicEvent.getMsgType()){
             case MSG_ADD_MUSIC:
                 if(playMusicList !=  null){
-                    playMusicList.add(musicEvent.getMusicInfo());
+                    playMusicList.add(musicEvent.getCurMusicInfo());
                     // 更新service的数据
                     List<MusicInfo> tmp = new ArrayList<>();
-                    tmp.add(musicEvent.getMusicInfo());
+                    tmp.add(musicEvent.getCurMusicInfo());
                     musicPlayService.addMusicInfoList(tmp);
                 }
             case MSG_UPDATE_ACTIVITY:
             {
-                curMusicInfo = musicEvent.getMusicInfo();
+
+                curMusicInfo = musicEvent.getCurMusicInfo();
+                currentMusicIndex = musicEvent.getCurMusicInfoIndex();
 
                 // 加载歌词
                 loadlyricText(curMusicInfo.getLyricUrl());
@@ -495,14 +563,12 @@ public class MusicPlayActivity extends AppCompatActivity {
                 .get()
                 .url(url)
                 .build();
-
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.i("TAG", "onFailure: ");
                 Toast.makeText(MusicPlayActivity.this,"网络错误",Toast.LENGTH_SHORT).show();
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.isSuccessful()){
@@ -514,7 +580,6 @@ public class MusicPlayActivity extends AppCompatActivity {
 //                    }
                     // 清除之前的歌词
                     lyricList.clear();
-
                     for (String str : lyricContentList) {
                         String contentTime = str.substring(1, 8);
                         String content = str.substring(10);
@@ -531,7 +596,6 @@ public class MusicPlayActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -541,7 +605,6 @@ public class MusicPlayActivity extends AppCompatActivity {
         unbindService(mConnection);
 
         EventBus.getDefault().unregister(this);
-
 
         handler.removeCallbacksAndMessages(null);
         handler.removeMessages(MSG_PROGRESS);
