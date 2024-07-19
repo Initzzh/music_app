@@ -348,21 +348,25 @@ public class MusicPlayActivity extends AppCompatActivity {
                     loveImage.setPivotY(loveImage.getHeight() / 2f);
 //                    ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, 1.2f, 1.0f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                     ObjectAnimator scaleAnimator = ObjectAnimator.ofPropertyValuesHolder(loveImage,
+                            PropertyValuesHolder.ofFloat(View.SCALE_X, 1.2f),
+                            PropertyValuesHolder.ofFloat(View.SCALE_Y,1.2f));
+                    scaleAnimator.setDuration(500); // 缩小动画持续时间为500毫秒
+
+                    ObjectAnimator scaleAnimator2 = ObjectAnimator.ofPropertyValuesHolder(loveImage,
                             PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f),
                             PropertyValuesHolder.ofFloat(View.SCALE_Y,1.0f));
 
                     scaleAnimator.setEvaluator(new ScaleEvaluator());
-
-                    ObjectAnimator scaleAnimator2 = ObjectAnimator.ofPropertyValuesHolder(loveImage,
-                            PropertyValuesHolder.ofFloat(View.SCALE_X, 0.8f),
-                            PropertyValuesHolder.ofFloat(View.SCALE_Y,1.2f));
-
+                    AnimatorSet animatorSet = new AnimatorSet();
+                    // 将动画添加到AnimatorSet中，使其按顺序播放
+                    animatorSet.playSequentially(scaleAnimator, scaleAnimator2);
+                    animatorSet.setDuration(1000);
 
                     ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(loveImage, View.ROTATION_Y, 0f, 360f);
-                    AnimatorSet animatorSet = new AnimatorSet();
-                    animatorSet.playTogether(scaleAnimator, rotationAnimator );
-                    animatorSet.setDuration(1000);
-                    animatorSet.start();
+                    AnimatorSet animatorSet2 = new AnimatorSet();
+                    animatorSet2.playTogether(animatorSet, rotationAnimator );
+                    animatorSet2.setDuration(1000);
+                    animatorSet2.start();
 
 //
                     collectedMusicList.add(curMusicInfo);
@@ -373,11 +377,22 @@ public class MusicPlayActivity extends AppCompatActivity {
                     loveImage.setPivotY(loveImage.getHeight() / 2f);
 
                     ObjectAnimator scaleAnimator = ObjectAnimator.ofPropertyValuesHolder(loveImage,
+                            PropertyValuesHolder.ofFloat(View.SCALE_X, 0.8f),
+                            PropertyValuesHolder.ofFloat(View.SCALE_Y,0.8f));
+                    scaleAnimator.setDuration(500); // 缩小动画持续时间为500毫秒
+
+                    ObjectAnimator scaleAnimator2 = ObjectAnimator.ofPropertyValuesHolder(loveImage,
                             PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f),
                             PropertyValuesHolder.ofFloat(View.SCALE_Y,1.0f));
-                    scaleAnimator.setEvaluator(new ScaleEvaluator2());
-                    scaleAnimator.setDuration(1000);
-                    scaleAnimator.start();
+                    scaleAnimator2.setDuration(500); // 缩小动画持续时间为500毫秒
+
+                    AnimatorSet animatorSet = new AnimatorSet();
+
+                    // 将动画添加到AnimatorSet中，使其按顺序播放
+                    animatorSet.playSequentially(scaleAnimator, scaleAnimator2);
+
+                    // 启动动画集
+                    animatorSet.start();
 
                     collectedMusicList.remove(curMusicInfo);
 
