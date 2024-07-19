@@ -109,7 +109,7 @@ public class IndexActivity extends AppCompatActivity {
 
     private Handler mhandler;
 
-    private int curMusicInfoIndex;
+    private int curMusicInfoIndex = 0;
 
     private MusicInfo curMusicInfo;
 
@@ -184,19 +184,22 @@ public class IndexActivity extends AppCompatActivity {
         suspendPlayImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MusicInfo musicInfo = playMusicList.get(curMusicInfoIndex);
+//                MusicInfo musicInfo = playMusicList.get(curMusicInfoIndex);
                 if(musicPlayService != null){
-                    musicPlayService.playMusic();
-                    suspendPlayImage.setImageResource(R.drawable.play_black);
+//                    musicPlayService.initMusic(playMusicList.get(curMusicInfoIndex).getMusicUrl());
+//                    musicPlayService.playMusic();
+//                    suspendPlayImage.setImageResource(R.drawable.play_black);
 
-//                    if(musicPlayService.isPlaying()){
-//                        musicPlayService.pauseMusic();
-//                        suspendPlayImage.setImageResource(R.drawable.pause_black);
-//
-//                    }else{
-//                        musicPlayService.playMusic();
-//                        suspendPlayImage.setImageResource(R.drawable.play_black);
-//                    }
+                    if(musicPlayService.isPlaying()){
+                        musicPlayService.pauseMusic();
+
+                        suspendPlayImage.setImageResource(R.drawable.pause_black);
+
+                    }else{
+                        musicPlayService.initMusic(playMusicList.get(curMusicInfoIndex).getMusicUrl());
+                        musicPlayService.playMusic();
+                        suspendPlayImage.setImageResource(R.drawable.play_black);
+                    }
                 }
             }
         });
@@ -284,8 +287,10 @@ public class IndexActivity extends AppCompatActivity {
             suspendLayout.setVisibility(View.VISIBLE);
             loadSuspendLayout();
             // 加载悬浮窗
-
-
+            if(musicPlayService != null){
+                musicPlayService.initMusic(playMusicList.get(curMusicInfoIndex).getMusicUrl());
+                musicPlayService.playMusic();
+            }
 
             curMusicInfoIndex = 0;
 
