@@ -66,6 +66,12 @@ public class MusicPlayActivity extends AppCompatActivity {
     private static final int MSG_UPDATE_ACTIVITY = 1;
     private static final int MSG_CLOSE_ACTIVITY = 5;
 
+    private final int MSG_MUSIC_CLICK = 6; // 音乐列表被点击
+    private final int MSG_MUSIC_REMOVE = 7;
+
+
+
+
     private final int SCROLLPOS = 7;
 
     private ImageView playImage;
@@ -162,7 +168,7 @@ public class MusicPlayActivity extends AppCompatActivity {
         musicList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MusicListBottomFragment musicListBottomFragment = new MusicListBottomFragment(playMusicList, playRule);
+                MusicListBottomFragment musicListBottomFragment = new MusicListBottomFragment(playMusicList, playRule , currentMusicIndex);
                 musicListBottomFragment.show(getSupportFragmentManager(),"musicListBottomSheetFragment");
             }
         });
@@ -538,7 +544,7 @@ public class MusicPlayActivity extends AppCompatActivity {
                 }
             case MSG_UPDATE_ACTIVITY:
             {
-
+                // 点击空白显示歌词
                 curMusicInfo = musicEvent.getCurMusicInfo();
                 currentMusicIndex = musicEvent.getCurMusicInfoIndex();
 
@@ -565,6 +571,38 @@ public class MusicPlayActivity extends AppCompatActivity {
                 }
 
 
+            }
+
+            case MSG_MUSIC_CLICK:{
+                currentMusicIndex = musicEvent.getCurMusicInfoIndex();
+                // 加载页面
+                curMusicInfo = playMusicList.get(currentMusicIndex);
+                lyricList = new ArrayList<>();
+                // 加载歌词
+                loadlyricText(curMusicInfo.getLyricUrl());
+                // 加载页面
+                musicCoverImage.setVisibility(View.VISIBLE);
+                lyricRecycle.setVisibility(View.GONE);
+                String url = curMusicInfo.getCoverUrl();
+                String httpsUrl = url.replace("http://","https://");
+                RequestOptions options = new RequestOptions().circleCropTransform();
+                Glide.with(getApplicationContext()).load(httpsUrl).apply(options).into(musicCoverImage);
+                musicName.setText(curMusicInfo.getMusicName());
+                musicAuthor.setText(curMusicInfo.getAuthor());
+
+                // 播放音乐
+                if(musicPlayService != null){
+                    musicPlayService.initMusic(playMusicList.get(currentMusicIndex).getMusicUrl());
+                    musicPlayService.playMusic();
+                    // 加载视图
+
+                }
+
+
+            }
+            case MSG_MUSIC_REMOVE:{
+                MusicInfo tempMusicInfo = musicEvent.getCurMusicInfo();
+                playMusicList.remove(tempMusicInfo);
             }
         }
 

@@ -15,18 +15,25 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.music_zhangzhenghuan.R;
+import com.example.music_zhangzhenghuan.entity.MusicEvent;
 import com.example.music_zhangzhenghuan.entity.MusicInfo;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
 public class MusicListRecycleAdapter extends RecyclerView.Adapter<MusicListRecycleAdapter.ViewHolder>{
 
 
+    private final int MSG_MUSIC_CLICK = 6;
+    private final int MSG_MUSIC_REMOVE = 7;
+
     private List<MusicInfo> curMusicInfoList;
     private int selectedPositon;
 
-    public  MusicListRecycleAdapter(List<MusicInfo> curMusicInfoList){
+    public  MusicListRecycleAdapter(List<MusicInfo> curMusicInfoList,int selectedPositon){
         this.curMusicInfoList = curMusicInfoList;
+        this.selectedPositon = selectedPositon;
     }
 
 
@@ -60,8 +67,11 @@ public class MusicListRecycleAdapter extends RecyclerView.Adapter<MusicListRecyc
         holder.musicRemoveImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MusicInfo curMusicInfo = curMusicInfoList.get(position);
                 curMusicInfoList.remove(position);
                 notifyItemRemoved(position);
+                EventBus.getDefault().postSticky(new MusicEvent(MSG_MUSIC_REMOVE,curMusicInfo));
+
                 if(position < getItemCount()){
                     notifyItemRangeChanged(position, getItemCount());
                 }
@@ -75,6 +85,7 @@ public class MusicListRecycleAdapter extends RecyclerView.Adapter<MusicListRecyc
                     notifyItemChanged(selectedPositon);
                     selectedPositon = position;
                     notifyItemChanged(position);
+                    EventBus.getDefault().postSticky(new MusicEvent(MSG_MUSIC_CLICK, position));
                 }
 
                 ColorDrawable background = (ColorDrawable) holder.itemView.getBackground();

@@ -31,13 +31,16 @@ public class MusicListBottomFragment extends BottomSheetDialogFragment {
 
     private int curPlayMode = 0;
 
+    private int selectedPositon = 0;
+
     RecyclerView musicListRecycle;
     MusicListRecycleAdapter musicListRecycleAdapter;
 
 
-    public MusicListBottomFragment(List<MusicInfo> curMusicInfoList,int curPlayMode){
+    public MusicListBottomFragment(List<MusicInfo> curMusicInfoList,int curPlayMode, int selectedPositon){
         this.curMusicInfoList = curMusicInfoList;
         this.curPlayMode = curPlayMode;
+        this.selectedPositon = selectedPositon;
     }
 
     @Nullable
@@ -66,7 +69,7 @@ public class MusicListBottomFragment extends BottomSheetDialogFragment {
         }
 
         RecyclerView musicListRecycle = view.findViewById(R.id.music_list_recycle);
-        MusicListRecycleAdapter musicListRecycleAdapter = new MusicListRecycleAdapter(curMusicInfoList);
+        MusicListRecycleAdapter musicListRecycleAdapter = new MusicListRecycleAdapter(curMusicInfoList,selectedPositon);
         musicListRecycle.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
         musicListRecycle.setAdapter(musicListRecycleAdapter);
         return  view;

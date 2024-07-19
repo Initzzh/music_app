@@ -75,6 +75,9 @@ public class IndexActivity extends AppCompatActivity {
     private static final int MSG_CLICK_ITEM = 4;
 
     private static final int MSG_CLOSE_ACTIVITY = 5;
+
+    private final int MSG_MUSIC_CLICK = 6;
+    private final int MSG_MUSIC_REMOVE = 7;
     private static final int MSG_SHOW_TOAST = 2;
 
 
@@ -265,7 +268,7 @@ public class IndexActivity extends AppCompatActivity {
         suspendListImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MusicListBottomFragment musicListBottomFragment = new MusicListBottomFragment(playMusicList,curPlayMode);
+                MusicListBottomFragment musicListBottomFragment = new MusicListBottomFragment(playMusicList,curPlayMode, curMusicInfoIndex);
                 musicListBottomFragment.show(getSupportFragmentManager(),"musicListBottomSheetFragment");
 
             }
@@ -349,6 +352,24 @@ public class IndexActivity extends AppCompatActivity {
             loadSuspendLayout();
 
         }
+
+        if(musicEvent.getMsgType() == MSG_MUSIC_CLICK){
+            curMusicInfoIndex = musicEvent.getCurMusicInfoIndex();
+
+            if(musicPlayService != null){
+                musicPlayService.initMusic(playMusicList.get(curMusicInfoIndex).getMusicUrl());
+                musicPlayService.playMusic();
+                loadSuspendLayout();
+
+            }
+
+
+        }
+        if(musicEvent.getMsgType() == MSG_MUSIC_REMOVE){
+            MusicInfo tempMusicInfo = musicEvent.getCurMusicInfo();
+            playMusicList.remove(tempMusicInfo);
+        }
+
     }
 
 

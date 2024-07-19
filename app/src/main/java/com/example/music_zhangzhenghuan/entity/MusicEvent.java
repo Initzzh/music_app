@@ -48,6 +48,7 @@ public class MusicEvent {
 
     }
 
+
     public List<MusicInfo> getRemainPlayMusicInfoList() {
         return remainPlayMusicInfoList;
     }
