@@ -196,7 +196,7 @@ public class IndexActivity extends AppCompatActivity {
                         suspendPlayImage.setImageResource(R.drawable.pause_black);
 
                     }else{
-                        musicPlayService.initMusic(playMusicList.get(curMusicInfoIndex).getMusicUrl());
+//                        musicPlayService.initMusic(playMusicList.get(curMusicInfoIndex).getMusicUrl());
                         musicPlayService.playMusic();
                         suspendPlayImage.setImageResource(R.drawable.play_black);
                     }
@@ -288,8 +288,10 @@ public class IndexActivity extends AppCompatActivity {
             loadSuspendLayout();
             // 加载悬浮窗
             if(musicPlayService != null){
+                musicPlayService.addMusicInfoList(musicEvent.getPlayMusicInfoList());
                 musicPlayService.initMusic(playMusicList.get(curMusicInfoIndex).getMusicUrl());
                 musicPlayService.playMusic();
+                suspendPlayImage.setImageResource(R.drawable.play_black);
             }
 
             curMusicInfoIndex = 0;

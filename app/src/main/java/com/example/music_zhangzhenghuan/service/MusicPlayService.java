@@ -102,6 +102,7 @@ public class MusicPlayService extends Service {
                 mediaPlayer.reset();
                 mediaPlayer.setDataSource(url);
                 mediaPlayer.prepare();
+                isInit = true;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
